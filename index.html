@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultrareális 3D Mozi Terem v3</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000; }
+        #cinema-gate {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #222 0%, #000 100%); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: #fff; font-family: 'Segoe UI', sans-serif;
+        }
+        .start-btn {
+            padding: 18px 45px; font-size: 20px; cursor: pointer; font-weight: bold;
+            background: #e50914; color: white; border: none; border-radius: 5px;
+            box-shadow: 0 5px 25px rgba(229,9,20,0.5); transition: 0.3s;
+        }
+        .start-btn:hover { transform: scale(1.05); background: #ff1420; }
+    </style>
+</head>
+<body>
+
+    <div id="cinema-gate">
+        <h1 style="letter-spacing: 3px; margin-bottom: 5px;">PREMIUM KINOTEÁTRUM</h1>
+        <p style="color: #aaa; margin-bottom: 40px;">Kérjük, lépjen be a terembe. A vetítés hamarosan kezdődik.</p>
+        <button class="start-btn" onclick="initCinemaSequence()">BELÉPÉS A TEREMBE</button>
+    </div>
+
+    <a-scene>
+        <a-assets>
+            <video id="reklamatv" loop="false" src="reklam.mp4" crossorigin="anonymous" playsinline></video>
+            <video id="filmtv" loop="false" src="film.mp4" crossorigin="anonymous" playsinline></video>
+        </a-assets>
+
+        <a-entity position="0 4.2 12" id="user-rig">
+            <a-camera look-controls></a-camera>
+        </a-entity>
+
+        <a-plane position="0 0 0" rotation="-90 0 0" width="24" height="30" color="#141414" roughness="1"></a-plane>
+        <a-plane position="0 10 0" rotation="90 0 0" width="24" height="30" color="#0a0a0a" roughness="1"></a-plane>
+        <a-box position="-12 5 0" width="0.2" height="10" depth="30" color="#2b1810" roughness="0.9"></a-box>
+        <a-box position="12 5 0" width="0.2" height="10" depth="30" color="#2b1810" roughness="0.9"></a-box>
+        <a-box position="0 5 15" width="24" height="10" depth="0.2" color="#1c110b" roughness="0.9"></a-box>
+        <a-box position="0 5 -15" width="24" height="10" depth="0.2" color="#050505" roughness="1"></a-box>
+
+        <a-box position="0 0.5 3" width="24" height="1" depth="4" color="#1a1a1a"></a-box>
+        <a-box position="0 1.5 7" width="24" height="1" depth="4" color="#181818"></a-box>
+        <a-box position="0 2.5 11" width="24" height="1" depth="4" color="#151515"></a-box>
+        
+        <a-box position="-11.9 1.01 3" width="0.1" height="0.02" depth="4" color="#00ffff" material="shader:flat"></a-box>
+        <a-box position="11.9 1.01 3" width="0.1" height="0.02" depth="4" color="#00ffff" material="shader:flat"></a-box>
+        <a-box position="-11.9 2.01 7" width="0.1" height="0.02" depth="4" color="#00ffff" material="shader:flat"></a-box>
+        <a-box position="11.9 2.01 7" width="0.1" height="0.02" depth="4" color="#00ffff" material="shader:flat"></a-box>
+
+        <a-box position="-11.8 5 -5" width="0.1" height="8" depth="0.3" color="#3d2318"></a-box>
+        <a-box position="-11.8 5 -2" width="0.1" height="8" depth="0.3" color="#3d2318"></a-box>
+        <a-box position="-11.8 5 1" width="0.1" height="8" depth="0.3" color="#3d2318"></a-box>
+        <a-box position="-11.8 5 4" width="0.1" height="8" depth="0.3" color="#3d2318"></a-box>
+        <a-box position="-11.8 5 7" width="0.1" height="8" depth="0.3" color="#3d2318"></a-box>
+        <a-box position="11.8 5 -5" width="0.1" height="8" depth="0.3" color="#3d2318"></a-box>
+        <a-box position="11.8 5 -2" width="0.1" height="8" depth="0.3" color="#3d2318"></a-box>
+        <a-box position="11.8 5 1" width="0.1" height="8" depth="0.3" color="#3d2318"></a-box>
+        <a-box position="11.8 5 4" width="0.1" height="8" depth="0.3" color="#3d2318"></a-box>
+        <a-box position="11.8 5 7" width="0.1" height="8" depth="0.3" color="#3d2318"></a-box>
+
+        <a-light id="main-lights" type="ambient" color="#fff" intensity="1.5"></a-light>
+        <a-light id="wall-light-l" type="point" color="#ffaa44" intensity="0.6" position="-11 7 0" distance="15"></a-light>
+        <a-light id="wall-light-r" type="point" color="#ffaa44" intensity="0.6" position="11 7 0" distance="15"></a-light>
+        <a-light id="screen-glow" type="point" color="#fff" intensity="0" position="0 5 -10" distance="20"></a-light>
+
+        <a-entity id="cinema-screen" position="0 5 -14.5">
+            <a-video id="screen-surface" width="20" height="9" roughness="1" color="#000000"></a-video>
+            <a-plane id="text-bg" width="20" height="9" color="#000000" position="0 0 0.01"></a-plane>
+            <a-text id="screen-text" value="UDVOZOLJUK A MOZITEREMBEN!\n\nA vetites hamarosan kezdodik.\nKerjuk, halkitsa le a mobiltelefonjat." 
+                    align="center" width="14" color="#ffffff" position="0 0 0.05" font="kelsonsans"></a-text>
+            <a-box position="0 0 -0.05" width="20.4" height="9.4" depth="0.1" color="#020202"></a-box>
+        </a-entity>
+
+
+        <a-entity position="-3 0.2 -1" rotation="0 180 0">
+            <a-box class="seat" width="0.8" height="0.4" depth="0.6" color="#600"></a-box>
+            <a-box class="back" position="0 0.5 0.25" rotation="-10 0 0" width="0.8" height="0.9" depth="0.15" color="#500"></a-box>
+            <a-box class="arm-l" position="-0.45 0.2 0" width="0.1" height="0.5" depth="0.5" color="#111"></a-box>
+            <a-box class="arm-r" position="0.45 0.2 0" width="0.1" height="0.5" depth="0.5" color="#111"></a-box>
+            <a-text value="S1 - 1" align="center" width="2" position="0 1.1 0.33" rotation="0 180 0" color="#fff"></a-text>
+        </a-entity>
+        <a-entity position="0 0.2 -1" rotation="0 180 0">
+            <a-box class="seat" width="0.8" height="0.4" depth="0.6" color="#600"></a-box>
+            <a-box class="back" position="0 0.5 0.25" rotation="-10 0 0" width="0.8" height="0.9" depth="0.15" color="#500"></a-box>
+            <a-box class="arm-l" position="-0.45 0.2 0" width="0.1" height="0.5" depth="0.5" color="#111"></a-box>
+            <a-box class="arm-r" position="0.45 0.2 0" width="0.1" height="0.5" depth="0.5" color="#111"></a-box>
+            <a-text value="S1 - 2" align="center" width="2" position="0 1.1 0.33" rotation="0 180 0" color="#fff"></a-text>
+        </a-entity>
+        <a-entity position="3 0.2 -1" rotation="0 180 0">
+            <a-box class="seat" width="0.8" height="0.4" depth="0.6" color="#600"></a-box>
+            <a-box class="back" position="0 0.5 0.25" rotation="-10 0 0" width="0.8" height="0.9" depth="0.15" color="#500"></a-box>
+            <a-box class="arm-l" position="-0.45 0.2 0" width="0.1" height="0.5" depth="0.5" color="#111"></a-box>
+            <a-box class="arm-r" position="0.45 0.2 0" width="0.1" height="0.5" depth="0.5" color="#111"></a-box>
+            <a-text value="S1 - 3" align="center" width="2" position="0 1.1 0.33" rotation="0 180 0" color="#fff"></a-text>
+        </a-entity>
+
+        <a-entity position="-3 1.2 3" rotation="0 180 0">
+            <a-box class="seat" width="0.8" height="0.4" depth="0.6" color="#600"></a-box>
+            <a-box class="back" position="0 0.5 0.25" rotation="-10 0 0" width="0.8" height="0.9" depth="0.15" color="#500"></a-box>
+            <a-box class="arm-l" position="-0.45 0.2 0" width="0.1" height="0.5" depth="0.5" color="#111"></a-box>
+            <a-box class="arm-r" position="0.45 0.2 0" width="0.1" height="0.5" depth="0.5" color="#111"></a-box>
+            <a-text value="S2 - 1" align="center" width="2" position="0 1.1 0.33" rotation="0 180 0" color="#fff"></a-text>
+        </a-entity>
+        <a-entity position="0 1.2 3" rotation="0 180 0">
+            <a-box class="seat" width="0.8" height="0.4" depth="0.6" color="#600"></a-box>
+            <a-box class="back" position="0 0.5 0.25" rotation="-10 0 0" width="0.8" height="0.9" depth="0.15" color="#500"></a-box>
+            <a-box class="arm-l" position="-0.45 0.2 0" width="0.1" height="0.5" depth="0.5" color="#111"></a-box>
+            <a-box class="arm-r" position="0.45 0.2 0" width="0.1" height="0.5" depth="0.5" color="#111"></a-box>
+            <a-text value="S2 - 2" align="center" width="2" position="0 1.1 0.33" rotation="0 180 0" color="#fff"></a-text>
+        </a-entity>
+        <a-entity position="3 1.2 3" rotation="0 180 0">
+            <a-box class="seat" width="0.8" height="0.4" depth="0.6" color="#600"></a-box>
+            <a-box class="back" position="0 0.5 0.25" rotation="-10 0 0" width="0.8" height="0.9" depth="0.15" color="#500"></a-box>
+            <a-box class="arm-l" position="-0.45 0.2 0" width="0.1" height="0.5" depth="0.5" color="#111"></a-box>
+            <a-box class="arm-r" position="0.45 0.2 0" width="0.1" height="0.5" depth="0.5" color="#111"></a-box>
+            <a-text value="S2 - 3" align="center" width="2" position="0 1.1 0.33" rotation="0 180 0" color="#fff"></a-text>
+        </a-entity>
+
+        <a-entity position="-2 2.2 7" rotation="0 180 0">
+            <a-box class="seat" width="0.8" height="0.4" depth="0.6" color="#600"></a-box>
+            <a-box class="back" position="0 0.5 0.25" rotation="-10 0 0" width="0.8" height="0.9" depth="0.15" color="#500"></a-box>
+            <a-box class="arm-l" position="-0.45 0.2 0" width="0.1" height="0.5" depth="0.5" color="#111"></a-box>
+            <a-box class="arm-r" position="0.45 0.2 0" width="0.1" height="0.5" depth="0.5" color="#111"></a-box>
+            <a-text value="S3 - 1" align="center" width="2" position="0 1.1 0.33" rotation="0 180 0" color="#fff"></a-text>
+        </a-entity>
+        <a-entity position="2 2.2 7" rotation="0 180 0">
+            <a-box class="seat" width="0.8" height="0.4" depth="0.6" color="#600"></a-box>
+            <a-box class="back" position="0 0.5 0.25" rotation="-10 0 0" width="0.8" height="0.9" depth="0.15" color="#500"></a-box>
+            <a-box class="arm-l" position="-0.45 0.2 0" width="0.1" height="0.5" depth="0.5" color="#111"></a-box>
+            <a-box class="arm-r" position="0.45 0.2 0" width="0.1" height="0.5" depth="0.5" color="#111"></a-box>
+            <a-text value="S3 - 3" align="center" width="2" position="0 1.1 0.33" rotation="0 180 0" color="#fff"></a-text>
+        </a-entity>
+
+    </a-scene>
+
+    <script>
+        const gate = document.getElementById('cinema-gate');
+        const mainLights = document.getElementById('main-lights');
+        const wallLightL = document.getElementById('wall-light-l');
+        const wallLightR = document.getElementById('wall-light-r');
+        const screenSurface = document.getElementById('screen-surface');
+        const textBg = document.getElementById('text-bg');
+        const screenText = document.getElementById('screen-text');
+        const screenGlow = document.getElementById('screen-glow');
+
+        const reklamVideo = document.getElementById('reklamatv');
+        const filmVideo = document.getElementById('filmtv');
+
+        function initCinemaSequence() {
+            gate.style.display = 'none';
+            
+            // Böngésző "felébresztése": Kattintásra azonnal megérintjük a videókat,
+            // így később, a sötétítés után már engedni fogja őket lejátszani hanggal is.
+            reklamVideo.play().then(() => { reklamVideo.pause(); }).catch(e => console.log(e));
+            filmVideo.play().then(() => { filmVideo.pause(); }).catch(e => console.log(e));
+
+            // 4 másodpercig tart a világos fázis, ahol a fekete vásznon olvasható a fehér szöveg
+            setTimeout(() => {
+                dimLightsAndStartAds();
+            }, 4000);
+        }
+
+        function dimLightsAndStartAds() {
+            let intensity = 1.5;
+            let wallIntensity = 0.6;
+            
+            const fadeInterval = setInterval(() => {
+                intensity -= 0.08;
+                wallIntensity -= 0.04;
+                
+                if (intensity <= 0.05) {
+                    clearInterval(fadeInterval);
+                    mainLights.setAttribute('intensity', '0.02');
+                    wallLightL.setAttribute('intensity', '0.01');
+                    wallLightR.setAttribute('intensity', '0.01');
+                    
+                    // Elrejtjük a statikus szöveglapot és a feliratot, hogy átadja a helyét a filmnek
+                    textBg.setAttribute('visible', 'false');
+                    screenText.setAttribute('visible', 'false');
+                    
+                    // Indul a REKLÁM
+                    startReklam();
+                } else {
+                    mainLights.setAttribute('intensity', intensity.toString());
+                    wallLightL.setAttribute('intensity', wallIntensity.toString());
+                    wallLightR.setAttribute('intensity', wallIntensity.toString());
+                }
+            }, 100);
+        }
+
+        function startReklam() {
+            screenSurface.setAttribute('color', '#ffffff');
+            screenSurface.setAttribute('src', '#reklamatv');
+            
+            // Az A-Frame-nek frissítenie kell a textúrát az új videó forráshoz
+            screenSurface.components.material.material.map.image = reklamVideo;
+            screenSurface.components.material.material.map.needsUpdate = true;
+
+            reklamVideo.play();
+            screenGlow.setAttribute('intensity', '0.4');
+
+            reklamVideo.onended = () => {
+                startMainFilm();
+            };
+        }
+
+        function startMainFilm() {
+            screenSurface.setAttribute('src', '#filmtv');
+            
+            // Itt is frissítjük az anyagtérképet a főfilmre váltáskor
+            screenSurface.components.material.material.map.image = filmVideo;
+            screenSurface.components.material.material.map.needsUpdate = true;
+
+            filmVideo.play();
+            screenGlow.setAttribute('intensity', '0.6');
+        }
+    </script>
+</body>
+</html>
